@@ -5,13 +5,14 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: alumni_supnum
+      MYSQL_DATABASE: supnum_alumni
       MYSQL_USER: user
       MYSQL_PASSWORD: user_password
     ports:
       - "3307:3306"
     volumes:
       - pi_db_data:/var/lib/mysql
+      - ./backend/setup/database.sql:/docker-entrypoint-initdb.d/database.sql
     networks:
       - pi-network
     healthcheck:
@@ -30,7 +31,7 @@ services:
       - DB_HOST=db
       - DB_USER=root
       - DB_PASSWORD=root_password
-      - DB_NAME=alumni_supnum
+      - DB_NAME=supnum_alumni
       - JWT_SECRET=supnum_connect_secret_key_2024_change_this
       - FRONTEND_URL=http://localhost:3000
     depends_on:

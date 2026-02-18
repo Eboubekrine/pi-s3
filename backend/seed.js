@@ -31,22 +31,6 @@ async function seedDatabase() {
             )
         `);
 
-        await db.execute(`
-            CREATE TABLE IF NOT EXISTS competence (
-                id_competence INT AUTO_INCREMENT PRIMARY KEY,
-                nom_competence VARCHAR(100) NOT NULL
-            )
-        `);
-
-        await db.execute(`
-            CREATE TABLE IF NOT EXISTS utilisateur_competence (
-                id_user INT,
-                id_competence INT,
-                PRIMARY KEY (id_user, id_competence),
-                FOREIGN KEY (id_user) REFERENCES utilisateur(id_user) ON DELETE CASCADE,
-                FOREIGN KEY (id_competence) REFERENCES competence(id_competence) ON DELETE CASCADE
-            )
-        `);
 
         await db.execute(`
             CREATE TABLE IF NOT EXISTS offre (
@@ -108,25 +92,10 @@ async function seedDatabase() {
 
         console.log('✅ Tables créées avec succès');
 
-        // 2. Insérer les compétences
-        const competences = [
-            'JavaScript', 'React', 'Node.js', 'Python', 'Java',
-            'PHP', 'HTML/CSS', 'SQL', 'MongoDB', 'AWS',
-            'Docker', 'Git', 'UI/UX Design', 'Machine Learning', 'Cybersecurity'
-        ];
-
-        for (const competence of competences) {
-            await db.execute(
-                'INSERT IGNORE INTO competence (nom_competence) VALUES (?)',
-                [competence]
-            );
-        }
-
-        console.log('✅ Compétences insérées');
 
         // 3. Créer l'utilisateur admin
         const hashedPassword = await bcrypt.hash('Admin123!', 10);
-        
+
         await db.execute(
             'INSERT IGNORE INTO utilisateur (nom, prenom, email, mot_de_passe, role) VALUES (?, ?, ?, ?, ?)',
             ['Admin', 'System', 'admin@supnum.mr', hashedPassword, 'ADMIN']
@@ -161,7 +130,7 @@ async function seedDatabase() {
 
         for (const user of testUsers) {
             const userPassword = await bcrypt.hash(user.password, 10);
-            
+
             const [result] = await db.execute(
                 'INSERT IGNORE INTO utilisateur (nom, prenom, email, mot_de_passe, role) VALUES (?, ?, ?, ?, ?)',
                 [user.nom, user.prenom, user.email, userPassword, user.role]
@@ -170,8 +139,8 @@ async function seedDatabase() {
             if (user.role === 'ALUMNI' && result.insertId) {
                 await db.execute(
                     'INSERT IGNORE INTO alumni (id_user, annee_diplome, specialite, entreprise_actuelle, poste, linkedin) VALUES (?, ?, ?, ?, ?, ?)',
-                    [result.insertId, user.alumniData.annee_diplome, user.alumniData.specialite, 
-                     user.alumniData.entreprise_actuelle, user.alumniData.poste, user.alumniData.linkedin]
+                    [result.insertId, user.alumniData.annee_diplome, user.alumniData.specialite,
+                    user.alumniData.entreprise_actuelle, user.alumniData.poste, user.alumniData.linkedin]
                 );
             }
         }

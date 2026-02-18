@@ -1,7 +1,7 @@
 -- Script de données de test pour l'application Alumni Network
 -- Exécutez ce script APRÈS avoir créé la base de données avec init-db.js
 
-USE alumni_supnum;
+USE supnum_alumni;
 
 -- Nettoyer les données existantes (ATTENTION: cela supprime TOUTES les données)
 SET FOREIGN_KEY_CHECKS = 0;

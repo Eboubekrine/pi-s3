@@ -1,6 +1,6 @@
 -- 1. إنشاء قاعدة البيانات
-CREATE DATABASE IF NOT EXISTS alumni_supnum;
-USE alumni_supnum;
+CREATE DATABASE IF NOT EXISTS supnum_alumni;
+USE supnum_alumni;
 
 -- 2. جدول المستخدمين
 CREATE TABLE IF NOT EXISTS utilisateur (
@@ -40,20 +40,6 @@ CREATE TABLE IF NOT EXISTS alumni (
     FOREIGN KEY (id_user) REFERENCES utilisateur(id_user) ON DELETE CASCADE
 );
 
--- 4. جدول المهارات
-CREATE TABLE IF NOT EXISTS competence (
-    id_competence INT AUTO_INCREMENT PRIMARY KEY,
-    nom_competence VARCHAR(100) NOT NULL UNIQUE
-);
-
--- 5. جدول مهارات المستخدمين
-CREATE TABLE IF NOT EXISTS utilisateur_competence (
-    id_user INT,
-    id_competence INT,
-    PRIMARY KEY (id_user, id_competence),
-    FOREIGN KEY (id_user) REFERENCES utilisateur(id_user) ON DELETE CASCADE,
-    FOREIGN KEY (id_competence) REFERENCES competence(id_competence) ON DELETE CASCADE
-);
 
 -- 6. جدول العروض (وظائف/تدريبات)
 CREATE TABLE IF NOT EXISTS offre (
@@ -138,15 +124,6 @@ CREATE TABLE IF NOT EXISTS connexion (
     FOREIGN KEY (id_receveur) REFERENCES utilisateur(id_user) ON DELETE CASCADE
 );
 
--- 12. إدراج المهارات الأساسية
-INSERT IGNORE INTO competence (nom_competence) VALUES
-('JavaScript'), ('React'), ('Node.js'), ('Python'), ('Java'),
-('PHP'), ('HTML/CSS'), ('SQL'), ('MongoDB'), ('AWS'),
-('Docker'), ('Git'), ('UI/UX Design'), ('Machine Learning'), ('Cybersecurity'),
-('Flutter'), ('React Native'), ('Vue.js'), ('Angular'), ('TypeScript'),
-('C++'), ('C#'), ('.NET'), ('Swift'), ('Kotlin'),
-('DevOps'), ('CI/CD'), ('Linux'), ('Redis'), ('Kubernetes'),
-('Big Data'), ('Data Analysis'), 'Power BI', 'Tableau', 'Excel');
 
 -- 13. إنشاء مستخدم المدير (كلمة المرور: Admin123!)
 INSERT IGNORE INTO utilisateur (nom, prenom, email, mot_de_passe, role, est_verifie) VALUES

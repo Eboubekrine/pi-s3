@@ -12,7 +12,7 @@ const dbConfig = {
 async function createAdmin() {
     try {
         const connection = await mysql.createConnection(dbConfig);
-        await connection.query('USE alumni_supnum');
+        await connection.query('USE supnum_alumni');
 
         const nom = 'Admin';
         const prenom = 'SupNum';
