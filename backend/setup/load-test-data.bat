@@ -18,7 +18,7 @@ pause
 
 echo.
 echo Connexion à MySQL...
-mysql -u root -p alumni_supnum < test-data.sql
+mysql -u root -p supnum_alumni < test-data.sql
 
 if %ERRORLEVEL% EQU 0 (
     echo.

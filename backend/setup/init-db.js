@@ -9,8 +9,8 @@ const dbConfig = {
 };
 
 const schema = `
-CREATE DATABASE IF NOT EXISTS alumni_supnum;
-USE alumni_supnum;
+CREATE DATABASE IF NOT EXISTS supnum_alumni;
+USE supnum_alumni;
 
 CREATE TABLE IF NOT EXISTS utilisateur (
     id_user INT AUTO_INCREMENT PRIMARY KEY,
@@ -33,18 +33,6 @@ CREATE TABLE IF NOT EXISTS alumni (
     FOREIGN KEY (id_user) REFERENCES utilisateur(id_user) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS competence (
-    id_competence INT AUTO_INCREMENT PRIMARY KEY,
-    nom_competence VARCHAR(100) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS utilisateur_competence (
-    id_user INT,
-    id_competence INT,
-    PRIMARY KEY (id_user, id_competence),
-    FOREIGN KEY (id_user) REFERENCES utilisateur(id_user) ON DELETE CASCADE,
-    FOREIGN KEY (id_competence) REFERENCES competence(id_competence) ON DELETE CASCADE
-);
 
 CREATE TABLE IF NOT EXISTS offre (
     id_offre INT AUTO_INCREMENT PRIMARY KEY,

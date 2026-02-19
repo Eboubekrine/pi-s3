@@ -1,7 +1,7 @@
 -- Script simple pour créer UN utilisateur de test
 -- Exécutez ce script dans MySQL Workbench
 
-USE alumni_supnum;
+USE supnum_alumni;
 
 -- Créer un utilisateur de test
 -- Mot de passe: password123

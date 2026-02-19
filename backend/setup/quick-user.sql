@@ -1,5 +1,5 @@
 -- Script ultra-simple pour créer UN utilisateur test
-USE alumni_supnum;
+USE supnum_alumni;
 
 -- Supprimer l'utilisateur s'il existe déjà
 DELETE FROM utilisateur WHERE email = 'test@supnum.mr';
