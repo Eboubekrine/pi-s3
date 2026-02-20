@@ -7,6 +7,9 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// database connection helper
+const db = require('./config/database');
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -48,10 +51,27 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: 'Internal Server Error' });
 });
 
-if (process.env.NODE_ENV !== 'production') {
+// start the server only if the database connection succeeds
+function startServer() {
     app.listen(PORT, () => {
         console.log(`🚀 Server running on port ${PORT}`);
     });
+}
+
+// try a simple query to verify connection
+if (process.env.NODE_ENV !== 'production') {
+    db.query('SELECT 1')
+      .then(() => {
+          console.log('✅ Database connection successful');
+          startServer();
+      })
+      .catch(err => {
+          console.error('❌ Could not connect to database:', err.message);
+          process.exit(1); // exit so the project doesn't run without a valid connection
+      });
+} else {
+    // in production you may want to start immediately or handle similarly
+    startServer();
 }
 
 module.exports = app;
