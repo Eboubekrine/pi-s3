@@ -26,14 +26,14 @@ SELECT id_user, '2Y005', 2023, 'Développement Web', 'MauriTech', 'Lead Develope
 FROM utilisateur WHERE email = 'fatima@supnum.mr';
 
 -- 4. Événements
-INSERT INTO evenement (titre, description, date_evenement, lieu, image, id_organisateur)
-SELECT 'Tech Days Nouakchott', 'Une série de conférences sur les nouvelles technologies en Mauritanie.', '2026-04-10', 'Palais des Congrès', 'https://images.unsplash.com/photo-1540575861501-7ad0582373f3?auto=format&fit=crop&q=80&w=1000', id_user
+INSERT INTO evenement (titre, description, date_evenement, lieu, image, type, id_organisateur)
+SELECT 'Tech Days Nouakchott', 'Une série de conférences sur les nouvelles technologies en Mauritanie.', '2026-04-10', 'Palais des Congrès', 'https://images.unsplash.com/photo-1540575861501-7ad0582373f3?auto=format&fit=crop&q=80&w=1000', 'Event', id_user
 FROM utilisateur WHERE email = 'admin@supnum.mr'
 UNION ALL
-SELECT 'Workshop Cybersecurity', 'Apprenez les bases de la défense contre les cyberattaques avec des experts.', '2026-05-02', 'Salle 102, SupNum', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1000', id_user
+SELECT 'Workshop Cybersecurity', 'Apprenez les bases de la défense contre les cyberattaques avec des experts.', '2026-05-02', 'Salle 102, SupNum', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1000', 'Challenge', id_user
 FROM utilisateur WHERE email = 'admin@supnum.mr'
 UNION ALL
-SELECT 'Pitch Your Startup', 'Présentez vos idées de startups devant un jury d''investisseurs.', '2026-06-12', 'CCI Mauritanie', 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&q=80&w=1000', id_user
+SELECT 'Pitch Your Startup', 'Présentez vos idées de startups devant un jury d''investisseurs.', '2026-06-12', 'CCI Mauritanie', 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&q=80&w=1000', 'Contest', id_user
 FROM utilisateur WHERE email = 'admin@supnum.mr';
 
 -- 5. Offres

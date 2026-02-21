@@ -9,7 +9,7 @@ const evenementController = {
                 return res.status(403).json({ success: false, message: 'Only Alumni and Admins can create events' });
             }
 
-            const { titre, description, date_evenement, lieu } = req.body;
+            const { titre, description, date_evenement, lieu, type } = req.body;
             const id_organisateur = req.user.userId;
 
             let image = req.body.image; // Keep URL if provided
@@ -22,10 +22,10 @@ const evenementController = {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
-            console.log('📝 Creating event:', { titre, image });
+            console.log('📝 Creating event:', { titre, image, type });
 
             const id = await Evenement.create({
-                titre, description, date_evenement, lieu, id_organisateur, image
+                titre, description, date_evenement, lieu, id_organisateur, image, type
             });
 
             res.status(201).json({ success: true, message: 'Event created', id });

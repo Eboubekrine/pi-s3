@@ -2,10 +2,10 @@ const db = require('../config/database');
 
 const Evenement = {
     create: async (eventData) => {
-        const { titre, description, date_evenement, lieu, id_organisateur, image } = eventData;
+        const { titre, description, date_evenement, lieu, id_organisateur, image, type } = eventData;
         const [result] = await db.execute(
-            'INSERT INTO evenement (titre, description, date_evenement, lieu, id_organisateur, image) VALUES (?, ?, ?, ?, ?, ?)',
-            [titre, description, date_evenement, lieu, id_organisateur, image || null]
+            'INSERT INTO evenement (titre, description, date_evenement, lieu, id_organisateur, image, type) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [titre, description, date_evenement, lieu, id_organisateur, image || null, type || 'Event']
         );
         return result.insertId;
     },

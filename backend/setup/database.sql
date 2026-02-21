@@ -107,6 +107,7 @@ CREATE TABLE evenement (
     date_evenement DATE,
     lieu VARCHAR(150),
     image VARCHAR(500),
+    type ENUM('Event', 'Challenge', 'Contest') DEFAULT 'Event',
     id_organisateur INT,
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_organisateur) REFERENCES utilisateur(id_user) ON DELETE SET NULL
