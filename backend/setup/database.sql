@@ -1,8 +1,24 @@
--- 1. إنشاء قاعدة البيانات
-CREATE DATABASE IF NOT EXISTS supnum_alumni;
-USE supnum_alumni;
+-- 1. إنشاء قاعدة البيانات (قم بتعطيل هذه الأسطر في Alwaysdata/Vercel)
+-- CREATE DATABASE IF NOT EXISTS supnum_alumni;
+-- USE supnum_alumni;
 
--- 2. جدول المستخدمين
+-- 2. إعادة ضبط الجداول (Reset Tables)
+SET FOREIGN_KEY_CHECKS = 0;
+
+DROP TABLE IF EXISTS notification;
+DROP TABLE IF EXISTS candidature;
+DROP TABLE IF EXISTS partenaire;
+DROP TABLE IF EXISTS utilisateur_groupe;
+DROP TABLE IF EXISTS groupe;
+DROP TABLE IF EXISTS connexion;
+DROP TABLE IF EXISTS evenement;
+DROP TABLE IF EXISTS message;
+DROP TABLE IF EXISTS offre;
+DROP TABLE IF EXISTS alumni;
+DROP TABLE IF EXISTS utilisateur;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
 CREATE TABLE IF NOT EXISTS utilisateur (
     id_user INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
@@ -15,6 +31,7 @@ CREATE TABLE IF NOT EXISTS utilisateur (
     bio TEXT,
     telephone VARCHAR(20),
     date_naissance DATE,
+    cv_url VARCHAR(500),
     statut_professionnel VARCHAR(100),
     poste VARCHAR(150),
     entreprise VARCHAR(150),
@@ -37,6 +54,12 @@ CREATE TABLE IF NOT EXISTS alumni (
     promotion VARCHAR(50),
     entreprise_actuelle VARCHAR(150),
     poste_actuel VARCHAR(150),
+    poste VARCHAR(150),
+    linkedin VARCHAR(255),
+    github VARCHAR(255),
+    facebook VARCHAR(255),
+    localisation VARCHAR(255),
+    disponible_mentorat BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (id_user) REFERENCES utilisateur(id_user) ON DELETE CASCADE
 );
 

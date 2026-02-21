@@ -37,8 +37,19 @@ app.use('/api/partners', require('./routes/partenaireRoutes'));
 app.use('/api/candidatures', require('./routes/candidatureRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 
-// Health Check
+// Health Checks
 app.get('/api/health', (req, res) => res.json({ status: 'OK', message: 'Backend is running' }));
+
+app.get('/api/health/db', async (req, res) => {
+    try {
+        const db = require('./config/database');
+        await db.execute('SELECT 1');
+        res.json({ status: 'OK', message: 'Database is connected' });
+    } catch (error) {
+        console.error('Database health check failed:', error);
+        res.status(500).json({ status: 'Error', message: error.message });
+    }
+});
 
 // 404 Handler
 app.use((req, res) => {
@@ -61,14 +72,14 @@ function startServer() {
 // try a simple query to verify connection
 if (process.env.NODE_ENV !== 'production') {
     db.query('SELECT 1')
-      .then(() => {
-          console.log('✅ Database connection successful');
-          startServer();
-      })
-      .catch(err => {
-          console.error('❌ Could not connect to database:', err.message);
-          process.exit(1); // exit so the project doesn't run without a valid connection
-      });
+        .then(() => {
+            console.log('✅ Database connection successful');
+            startServer();
+        })
+        .catch(err => {
+            console.error('❌ Could not connect to database:', err.message);
+            process.exit(1); // exit so the project doesn't run without a valid connection
+        });
 } else {
     // in production you may want to start immediately or handle similarly
     startServer();
