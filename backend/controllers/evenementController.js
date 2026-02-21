@@ -12,20 +12,20 @@ const evenementController = {
             const { titre, description, date_evenement, lieu, type } = req.body;
             const id_organisateur = req.user.userId;
 
-            let image = req.body.image; // Keep URL if provided
-            if (req.file) {
-                // Construct the full URL for the uploaded image
-                image = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-            }
+            let image = req.body.image; // HTML Base64 or URL
 
             if (!titre || !date_evenement) {
                 return res.status(400).json({ message: 'Missing required fields' });
             }
 
-            console.log('📝 Creating event:', { titre, image, type });
-
             const id = await Evenement.create({
-                titre, description, date_evenement, lieu, id_organisateur, image, type
+                titre,
+                description,
+                date_evenement,
+                lieu,
+                id_organisateur,
+                image,
+                type_evenement: type || 'Event'
             });
 
             res.status(201).json({ success: true, message: 'Event created', id });

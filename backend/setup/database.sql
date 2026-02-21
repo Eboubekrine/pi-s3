@@ -106,8 +106,8 @@ CREATE TABLE evenement (
     description TEXT,
     date_evenement DATE,
     lieu VARCHAR(150),
-    image VARCHAR(500),
-    type ENUM('Event', 'Challenge', 'Contest') DEFAULT 'Event',
+    image LONGTEXT, -- Modifié pour supporter les images Base64
+    type_evenement ENUM('Event', 'Challenge', 'Contest') DEFAULT 'Event',
     id_organisateur INT,
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_organisateur) REFERENCES utilisateur(id_user) ON DELETE SET NULL
