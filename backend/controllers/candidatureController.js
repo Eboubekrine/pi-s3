@@ -8,16 +8,20 @@ const candidatureController = {
             const { id_offre, message } = req.body;
             const id_user = req.user.userId;
 
-            if (!req.file) {
-                return res.status(400).json({ success: false, message: 'CV is required' });
+            if (!id_offre) {
+                return res.status(400).json({ success: false, message: 'id_offre is required' });
             }
 
             const alreadyApplied = await Candidature.checkExisting(id_user, id_offre);
             if (alreadyApplied) {
-                return res.status(400).json({ success: false, message: 'You have already applied for this offer' });
+                return res.status(400).json({ success: false, message: 'Vous avez déjà postulé à cette offre' });
             }
 
-            const cv_url = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+            // cv_url: use uploaded file URL if available, otherwise null
+            let cv_url = null;
+            if (req.file) {
+                cv_url = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+            }
 
             const id = await Candidature.create({
                 id_offre,
@@ -28,7 +32,7 @@ const candidatureController = {
 
             res.status(201).json({
                 success: true,
-                message: 'Application submitted successfully',
+                message: 'Candidature soumise avec succès',
                 id_candidature: id
             });
         } catch (error) {
