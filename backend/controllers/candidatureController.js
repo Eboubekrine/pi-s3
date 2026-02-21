@@ -5,11 +5,12 @@ const db = require('../config/database');
 const candidatureController = {
     apply: async (req, res) => {
         try {
-            const { id_offre, message } = req.body;
+            const id_offre = parseInt(req.body.id_offre); // Ensure it's a number
+            const message = req.body.message;
             const id_user = req.user.userId;
 
-            if (!id_offre) {
-                return res.status(400).json({ success: false, message: 'id_offre is required' });
+            if (!id_offre || isNaN(id_offre)) {
+                return res.status(400).json({ success: false, message: 'id_offre invalide ou manquant' });
             }
 
             const alreadyApplied = await Candidature.checkExisting(id_user, id_offre);
@@ -27,7 +28,7 @@ const candidatureController = {
                 id_offre,
                 id_user,
                 cv_url,
-                message
+                message: message || null
             });
 
             res.status(201).json({
@@ -37,7 +38,8 @@ const candidatureController = {
             });
         } catch (error) {
             console.error('Apply error:', error);
-            res.status(500).json({ success: false, message: error.message });
+            // Return the REAL error message so we can debug it
+            res.status(500).json({ success: false, message: error.message, sqlMessage: error.sqlMessage || null });
         }
     },
 
