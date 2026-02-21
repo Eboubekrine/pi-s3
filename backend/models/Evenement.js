@@ -19,9 +19,10 @@ const Evenement = {
         `;
         const params = [];
 
-        // if (filters.upcoming) {
-        //     query += ' AND e.date_evenement >= CURDATE()';
-        // }
+        if (filters.id_organisateur) {
+            query += ' AND e.id_organisateur = ?';
+            params.push(filters.id_organisateur);
+        }
 
         query += ' ORDER BY e.date_evenement ASC LIMIT ? OFFSET ?';
         params.push(parseLimit(limit), parseOffset(page, limit));

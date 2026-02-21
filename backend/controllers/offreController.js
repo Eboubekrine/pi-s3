@@ -3,6 +3,10 @@ const Offre = require('../models/Offre');
 const offreController = {
     create: async (req, res) => {
         try {
+            // Security Check - Only ALUMNI and ADMIN can create offers
+            if (req.user.role !== 'ALUMNI' && req.user.role !== 'ADMIN') {
+                return res.status(403).json({ success: false, message: 'Only Alumni and Admins can create offers' });
+            }
             const { titre, description, entreprise, type_offre, lieu } = req.body;
             const id_user = req.user.userId;
 
@@ -50,9 +54,9 @@ const offreController = {
             const offre = await Offre.findById(req.params.id);
             if (!offre) return res.status(404).json({ message: 'Offre not found' });
 
-            // Check if user is admin or owner
-            if (req.user.role !== 'ADMIN' && offre.id_user !== req.user.userId) {
-                return res.status(403).json({ message: 'Unauthorized' });
+            // Security Check - Only the Creator or Admin can update
+            if (req.user.role === 'STUDENT' || (req.user.role !== 'ADMIN' && offre.id_user !== req.user.userId)) {
+                return res.status(403).json({ success: false, message: 'Unauthorized: Students cannot edit offers' });
             }
 
             const success = await Offre.update(req.params.id, req.body);
@@ -68,9 +72,9 @@ const offreController = {
             const offre = await Offre.findById(req.params.id);
             if (!offre) return res.status(404).json({ message: 'Offre not found' });
 
-            // Check if user is admin or owner
-            if (req.user.role !== 'ADMIN' && offre.id_user !== req.user.userId) {
-                return res.status(403).json({ message: 'Unauthorized' });
+            // Security Check - Only the Creator or Admin can delete
+            if (req.user.role === 'STUDENT' || (req.user.role !== 'ADMIN' && offre.id_user !== req.user.userId)) {
+                return res.status(403).json({ success: false, message: 'Unauthorized: Students cannot delete offers' });
             }
 
             const success = await Offre.delete(req.params.id);
