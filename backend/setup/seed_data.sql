@@ -1,25 +1,70 @@
--- 1. Seeding Haute Qualité pour SupNum Connect
--- Attention : Assurez-vous que l'Admin (ID 1) existe déjà
+-- 1. Nettoyage des anciennes données
+SET FOREIGN_KEY_CHECKS = 0;
 
--- 2. Événements avec de vraies images Unsplash
-INSERT INTO evenement (titre, description, date_evenement, lieu, image, id_organisateur) VALUES
-('Sommet de l''IA en Mauritanie 2026', 'Le plus grand rassemblement tech de l''année. Keynotes sur les LLM et le futur du travail.', '2026-05-20', 'Palais des Congrès, Nouakchott', 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1000', 1),
-('Atelier Développement Cloud Native', 'Séance pratique sur Docker, Kubernetes et AWS pour les étudiants et diplômés.', '2026-06-15', 'Labo Silicon, SupNum', 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1000', 1),
-('Hackathon FinTech Africa', '48 heures pour transformer le secteur bancaire avec des solutions innovantes.', '2026-07-05', 'Espace Technopole', 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&q=80&w=1000', 1);
+DELETE FROM notification;
+DELETE FROM candidature;
+DELETE FROM partenaire;
+DELETE FROM evenement;
+DELETE FROM offre;
+DELETE FROM amis;
+DELETE FROM alumni;
+-- On garde uniquement l'admin et l'alumni par défaut
+DELETE FROM utilisateur WHERE email NOT IN ('admin@supnum.mr', 'ahmed@supnum.mr');
 
--- 3. Offres de haute qualité
-INSERT INTO offre (titre, description, entreprise, type_offre, lieu, id_user) VALUES
-('Développeur React/Node Senior', 'Rejoignez une équipe dynamique pour construire la plateforme du futur.', 'TechSolutions MR', 'EMPLOI', 'Nouakchott / Hybride', 1),
-('Stage Data Scientist (LLM)', 'Opportunité unique de travailler sur le traitement du langage naturel en Arabe/Hassanya.', 'Innovate Labs', 'STAGE', 'Nouadhibou', 1),
-('Alternance DevOps & SRE', 'Apprenez à gérer des infrastructures à grande échelle avec nos experts.', 'FinTech Hub', 'ALTERNANCE', 'Remote', 1);
+SET FOREIGN_KEY_CHECKS = 1;
 
--- 4. Partenaires stratégiques
+-- 2. Ajout des nouveaux utilisateurs (Etudiants et Alumni)
+-- Password: Password123
+INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, role, est_verifie, ville, bio, avatar) VALUES
+('Sidi', 'Mohamed', 'sidi@supnum.mr', '$2a$10$N9qo8uLOickgx2ZMRZoMye3YkG6k.ZMhQ7pL6YpM3eGd3cJN1TJvK', 'STUDENT', TRUE, 'Nouakchott', 'Étudiant passionné par la cybersécurité.', 'https://i.pravatar.cc/150?u=sidi'),
+('Fatimetou', 'Zahra', 'fatima@supnum.mr', '$2a$10$N9qo8uLOickgx2ZMRZoMye3YkG6k.ZMhQ7pL6YpM3eGd3cJN1TJvK', 'ALUMNI', TRUE, 'Nouadhibou', 'Développeuse Fullstack chez MauriTech.', 'https://i.pravatar.cc/150?u=fatima'),
+('Mariem', 'Saleh', 'mariem@supnum.mr', '$2a$10$N9qo8uLOickgx2ZMRZoMye3YkG6k.ZMhQ7pL6YpM3eGd3cJN1TJvK', 'STUDENT', TRUE, 'Nouakchott', 'Future data scientist.', 'https://i.pravatar.cc/150?u=mariem');
+
+-- 3. Profils Alumni (Utilisation de sous-requêtes pour les IDs)
+INSERT INTO alumni (id_user, supnum_id, annee_diplome, specialite, entreprise_actuelle, poste_actuel)
+SELECT id_user, '2Y005', 2023, 'Développement Web', 'MauriTech', 'Lead Developer' 
+FROM utilisateur WHERE email = 'fatima@supnum.mr';
+
+-- 4. Événements
+INSERT INTO evenement (titre, description, date_evenement, lieu, image, id_organisateur)
+SELECT 'Tech Days Nouakchott', 'Une série de conférences sur les nouvelles technologies en Mauritanie.', '2026-04-10', 'Palais des Congrès', 'https://images.unsplash.com/photo-1540575861501-7ad0582373f3?auto=format&fit=crop&q=80&w=1000', id_user
+FROM utilisateur WHERE email = 'admin@supnum.mr'
+UNION ALL
+SELECT 'Workshop Cybersecurity', 'Apprenez les bases de la défense contre les cyberattaques avec des experts.', '2026-05-02', 'Salle 102, SupNum', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1000', id_user
+FROM utilisateur WHERE email = 'admin@supnum.mr'
+UNION ALL
+SELECT 'Pitch Your Startup', 'Présentez vos idées de startups devant un jury d''investisseurs.', '2026-06-12', 'CCI Mauritanie', 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&q=80&w=1000', id_user
+FROM utilisateur WHERE email = 'admin@supnum.mr';
+
+-- 5. Offres
+INSERT INTO offre (titre, description, entreprise, type_offre, lieu, id_user)
+SELECT 'Ingénieur Système & Réseaux', 'Maintenance et évolution de notre infrastructure Cloud.', 'Mauritel', 'EMPLOI', 'Nouakchott', id_user
+FROM utilisateur WHERE email = 'admin@supnum.mr'
+UNION ALL
+SELECT 'Stage Mobile Flutter', 'Développement d’une application de livraison locale.', 'E-Boutique', 'STAGE', 'Remote', id_user
+FROM utilisateur WHERE email = 'admin@supnum.mr'
+UNION ALL
+SELECT 'Community Manager Tech', 'Gestion des réseaux sociaux pour une startup innovante.', 'MauriMarketing', 'ALTERNANCE', 'Nouakchott', id_user
+FROM utilisateur WHERE email = 'admin@supnum.mr';
+
+-- 6. Partenaires
 INSERT INTO partenaire (nom, secteur, ville, site_web, logo) VALUES
-('Chinguitel', 'Télécoms', 'Nouakchott', 'https://www.chinguitel.mr', 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Chinguitel_Logo.png'),
-('SmartData RIM', 'Data Science', 'Nouadhibou', 'https://www.smartdata.mr', 'https://images.unsplash.com/photo-1551288049-bbda38656a93?auto=format&fit=crop&q=80&w=300'),
-('Banque de Mauritanie', 'Finance', 'Nouakchott', 'https://www.bpm.mr', 'https://images.unsplash.com/photo-1611095973763-4140195a24c9?auto=format&fit=crop&q=80&w=300');
+('Mauritel', 'Télécoms', 'Nouakchott', 'https://www.mauritel.mr', 'https://www.mauritel.mr/sites/all/themes/mauritel/logo.png'),
+('Nouakchott Digital Center', 'Formation', 'Nouakchott', 'https://ndc.mr', 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=300'),
+('Startup Mauritanie', 'Innovation', 'Nouakchott', 'https://startup.mr', 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&q=80&w=300');
 
--- 5. Notifications tests
-INSERT INTO notification (id_user, type, contenu, lien) VALUES
-(1, 'INFO', 'Bienvenue sur la nouvelle version de SupNum Connect ! Explorez les événements.', '/dashboard/events'),
-(1, 'ALERTE', 'Votre profil est à 80% complet. Ajoutez une bio.', '/dashboard/profile');
+-- 7. Relations (Amis) - IDs dynamiques pour éviter l'erreur #1452
+INSERT INTO amis (id_demandeur, id_receveur, statut)
+SELECT (SELECT id_user FROM utilisateur WHERE email = 'admin@supnum.mr'), (SELECT id_user FROM utilisateur WHERE email = 'ahmed@supnum.mr'), 'ACCEPTE'
+UNION ALL
+SELECT (SELECT id_user FROM utilisateur WHERE email = 'sidi@supnum.mr'), (SELECT id_user FROM utilisateur WHERE email = 'admin@supnum.mr'), 'ACCEPTE'
+UNION ALL
+SELECT (SELECT id_user FROM utilisateur WHERE email = 'fatima@supnum.mr'), (SELECT id_user FROM utilisateur WHERE email = 'sidi@supnum.mr'), 'EN_ATTENTE';
+
+-- 8. Notifications
+INSERT INTO notification (id_user, type, contenu, lien)
+SELECT id_user, 'INFO', 'Nouveau workshop ajouté le 02 Mai !', '/dashboard/events'
+FROM utilisateur WHERE email = 'sidi@supnum.mr'
+UNION ALL
+SELECT id_user, 'URGENT', 'Une offre d''emploi correspond à votre profil chez Mauritel.', '/dashboard/offers'
+FROM utilisateur WHERE email = 'fatima@supnum.mr';

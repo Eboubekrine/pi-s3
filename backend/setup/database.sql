@@ -16,7 +16,7 @@ DROP TABLE IF EXISTS utilisateur;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
--- 2. Utilisateurs
+-- 2. Utilisateurs (Restored all legacy columns)
 CREATE TABLE utilisateur (
     id_user INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
@@ -28,27 +28,40 @@ CREATE TABLE utilisateur (
     avatar VARCHAR(500),
     bio TEXT,
     telephone VARCHAR(20),
+    date_naissance DATE, -- Restored
+    cv_url VARCHAR(500), -- Restored
+    statut_professionnel VARCHAR(100), -- Restored
+    poste VARCHAR(150), -- Restored
+    entreprise VARCHAR(150), -- Restored
+    linkedin VARCHAR(255),
+    github VARCHAR(255),
+    facebook VARCHAR(255), -- Restored
     ville VARCHAR(100),
     pays VARCHAR(100),
     est_verifie BOOLEAN DEFAULT FALSE,
     est_actif BOOLEAN DEFAULT TRUE
 );
 
--- 3. Alumni
+-- 3. Alumni (Restored legacy columns)
 CREATE TABLE alumni (
     id_alumni INT AUTO_INCREMENT PRIMARY KEY,
     id_user INT UNIQUE,
     supnum_id VARCHAR(20) UNIQUE,
     annee_diplome INT,
     specialite VARCHAR(100),
+    promotion VARCHAR(50), -- Restored
     entreprise_actuelle VARCHAR(150),
     poste_actuel VARCHAR(150),
+    poste VARCHAR(150), -- Restored
     linkedin VARCHAR(255),
     github VARCHAR(255),
+    facebook VARCHAR(255), -- Restored
+    localisation VARCHAR(255), -- Restored
+    disponible_mentorat BOOLEAN DEFAULT FALSE, -- Restored
     FOREIGN KEY (id_user) REFERENCES utilisateur(id_user) ON DELETE CASCADE
 );
 
--- 4. Amis (Anciennement connexion)
+-- 4. Amis
 CREATE TABLE amis (
     id_relation INT AUTO_INCREMENT PRIMARY KEY,
     id_demandeur INT,
@@ -93,7 +106,7 @@ CREATE TABLE evenement (
     description TEXT,
     date_evenement DATE,
     lieu VARCHAR(150),
-    image VARCHAR(500), -- Correspond à req.body.image dans evenementController
+    image VARCHAR(500),
     id_organisateur INT,
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_organisateur) REFERENCES utilisateur(id_user) ON DELETE SET NULL
@@ -134,7 +147,7 @@ CREATE TABLE partenaire (
     date_ajout TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 11. Compétences (Optionnel selon logique frontend)
+-- 11. Compétences
 CREATE TABLE utilisateur_competence (
     id_user INT,
     competence VARCHAR(100),
