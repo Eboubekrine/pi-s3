@@ -72,8 +72,18 @@ const evenementController = {
                 return res.status(403).json({ success: false, message: 'Unauthorized: Students cannot edit events' });
             }
 
-            const success = await Evenement.update(req.params.id, req.body);
-            if (!success) return res.status(404).json({ message: 'Event not found' });
+            const { titre, description, date_evenement, lieu, image, type } = req.body;
+
+            const updateData = {};
+            if (titre) updateData.titre = titre;
+            if (description !== undefined) updateData.description = description;
+            if (date_evenement) updateData.date_evenement = date_evenement;
+            if (lieu !== undefined) updateData.lieu = lieu;
+            if (image !== undefined) updateData.image = image;
+            if (type) updateData.type_evenement = type;
+
+            const success = await Evenement.update(req.params.id, updateData);
+            if (!success) return res.status(404).json({ message: 'Event not found or no changes made' });
             res.json({ success: true, message: 'Event updated' });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
