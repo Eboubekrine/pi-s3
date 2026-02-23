@@ -116,13 +116,16 @@ CREATE TABLE evenement (
 -- 8. Messages
 CREATE TABLE message (
     id_message INT AUTO_INCREMENT PRIMARY KEY,
-    contenu TEXT NOT NULL,
+    contenu TEXT,
     date_envoi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     est_lu BOOLEAN DEFAULT FALSE,
     id_expediteur INT,
     id_destinataire INT,
+    id_groupe INT,
+    image_url VARCHAR(500),
     FOREIGN KEY (id_expediteur) REFERENCES utilisateur(id_user) ON DELETE CASCADE,
-    FOREIGN KEY (id_destinataire) REFERENCES utilisateur(id_user) ON DELETE CASCADE
+    FOREIGN KEY (id_destinataire) REFERENCES utilisateur(id_user) ON DELETE CASCADE,
+    FOREIGN KEY (id_groupe) REFERENCES groupe(id_groupe) ON DELETE CASCADE
 );
 
 -- 9. Notifications
