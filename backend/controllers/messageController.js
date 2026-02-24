@@ -12,7 +12,11 @@ const messageController = {
 
             let image_url = null;
             if (req.file) {
-                image_url = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+                console.log('📁 Image uploaded:', req.file.filename);
+                const protocol = req.get('x-forwarded-proto') || req.protocol;
+                const host = req.get('host');
+                image_url = `${protocol}://${host}/uploads/${req.file.filename}`;
+                console.log('🔗 Generated URL:', image_url);
             }
 
             if (!messageText && !image_url) {

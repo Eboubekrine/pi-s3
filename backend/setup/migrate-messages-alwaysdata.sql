@@ -8,9 +8,8 @@ ALTER TABLE `message`
     MODIFY COLUMN `contenu` TEXT;
 
 -- 2. Ajout de la clé étrangère pour les groupes (si elle n'existe pas)
--- Note: Si vous avez déjà la contrainte, cette ligne peut être ignorée
 ALTER TABLE `message`
-    ADD CONSTRAINT `fk_message_groupe_new` 
+    ADD CONSTRAINT `fk_msg_grp_final` 
     FOREIGN KEY (`id_groupe`) REFERENCES `groupe`(`id_groupe`) ON DELETE SET NULL;
 
 -- 3. Mise à jour de la table 'offre' (pour les lieux)
