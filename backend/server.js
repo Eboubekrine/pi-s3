@@ -58,8 +58,13 @@ app.use((req, res) => {
 
 // Error Handler
 app.use((err, req, res, next) => {
+    console.error('❌ GLOBAL ERROR:', err.message);
     console.error(err.stack);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({
+        success: false,
+        message: err.message || 'Internal Server Error',
+        error: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
 });
 
 // start the server only if the database connection succeeds

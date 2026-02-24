@@ -7,10 +7,10 @@ ALTER TABLE `message`
     ADD COLUMN IF NOT EXISTS `image_url` VARCHAR(500) DEFAULT NULL AFTER `id_groupe`,
     MODIFY COLUMN `contenu` TEXT;
 
--- 2. Ajout de la clé étrangère pour les groupes (si elle n'existe pas)
-ALTER TABLE `message`
-    ADD CONSTRAINT `fk_msg_grp_final` 
-    FOREIGN KEY (`id_groupe`) REFERENCES `groupe`(`id_groupe`) ON DELETE SET NULL;
+-- 2. Ajout de la clé étrangère (OPTIONNEL - Ignorer si erreur)
+-- ALTER TABLE `message`
+--     ADD CONSTRAINT `fk_msg_grp_final` 
+--     FOREIGN KEY (`id_groupe`) REFERENCES `groupe`(`id_groupe`) ON DELETE SET NULL;
 
 -- 3. Mise à jour de la table 'offre' (pour les lieux)
 ALTER TABLE `offre` 
