@@ -8,6 +8,16 @@ const messageController = {
             const { contenu, content, recipientId, groupId } = req.body;
             const id_expediteur = req.user.userId;
 
+            console.log('✉️ Sending message request:', {
+                messageText: contenu || content,
+                recipientId,
+                groupId,
+                hasFile: !!req.file
+            });
+
+            // Clean IDs: convert empty strings to null
+            const cleanRecipientId = recipientId && recipientId !== '' ? recipientId : null;
+            const cleanGroupId = groupId && groupId !== '' ? groupId : null;
             const messageText = contenu || content;
 
             let image_url = null;
@@ -20,34 +30,39 @@ const messageController = {
             }
 
             if (!messageText && !image_url) {
-                return res.status(400).json({ message: 'Content or image required' });
+                return res.status(400).json({ success: false, message: 'Content or image required' });
             }
 
-            if (!recipientId && !groupId) {
-                return res.status(400).json({ message: 'Recipient or group required' });
+            if (!cleanRecipientId && !cleanGroupId) {
+                return res.status(400).json({ success: false, message: 'Recipient or group required' });
             }
 
             const id = await Message.create({
                 contenu: messageText || '',
                 id_expediteur,
-                id_destinataire: recipientId || null,
-                id_groupe: groupId || null,
+                id_destinataire: cleanRecipientId,
+                id_groupe: cleanGroupId,
                 image_url
             });
 
             // Trigger Notification for Direct Message
-            if (recipientId) {
-                const sender = await User.findById(id_expediteur);
-                await Notification.create({
-                    id_user: recipientId,
-                    type: 'MESSAGE',
-                    contenu: `Nouveau message de ${sender.prenom} ${sender.nom}`,
-                    lien: '/dashboard/messages'
-                });
+            if (cleanRecipientId) {
+                try {
+                    const sender = await User.findById(id_expediteur);
+                    await Notification.create({
+                        id_user: cleanRecipientId,
+                        type: 'MESSAGE',
+                        contenu: `Nouveau message de ${sender.prenom} ${sender.nom}`,
+                        lien: '/dashboard/messages'
+                    });
+                } catch (notifErr) {
+                    console.error('⚠️ Notification failed but message sent:', notifErr.message);
+                }
             }
 
             res.status(201).json({ success: true, message: 'Message sent', id, image_url });
         } catch (error) {
+            console.error('❌ Error in messageController.send:', error.message);
             res.status(500).json({ success: false, message: error.message });
         }
     },
