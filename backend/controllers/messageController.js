@@ -25,8 +25,9 @@ const messageController = {
                 console.log('📁 Image uploaded:', req.file.filename);
                 const protocol = req.get('x-forwarded-proto') || req.protocol;
                 const host = req.get('host');
-                image_url = `${protocol}://${host}/uploads/${req.file.filename}`;
-                console.log('🔗 Generated URL:', image_url);
+                const baseUrl = process.env.BACKEND_URL || `${protocol}://${host}`;
+                image_url = `${baseUrl}/uploads/${req.file.filename}`;
+                console.log('🔗 Generated Message Image URL:', image_url);
             }
 
             if (!messageText && !image_url) {

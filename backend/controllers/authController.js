@@ -139,11 +139,17 @@ const authController = {
             let cvUrl = updates.cv_url;
 
             if (req.files) {
+                const protocol = req.get('x-forwarded-proto') || req.protocol;
+                const host = req.get('host');
+                const baseUrl = process.env.BACKEND_URL || `${protocol}://${host}`;
+
                 if (req.files.avatar?.[0]) {
-                    avatarUrl = `${req.protocol}://${req.get('host')}/uploads/${req.files.avatar[0].filename}`;
+                    avatarUrl = `${baseUrl}/uploads/${req.files.avatar[0].filename}`;
+                    console.log('🖼️ Profile Avatar URL:', avatarUrl);
                 }
                 if (req.files.cv?.[0]) {
-                    cvUrl = `${req.protocol}://${req.get('host')}/uploads/${req.files.cv[0].filename}`;
+                    cvUrl = `${baseUrl}/uploads/${req.files.cv[0].filename}`;
+                    console.log('📄 CV URL:', cvUrl);
                 }
             }
 
