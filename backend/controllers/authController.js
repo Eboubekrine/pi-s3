@@ -7,10 +7,27 @@ const authController = {
     register: async (req, res) => {
         try {
             console.log('Register request:', req.body);
-            const { nom, prenom, email, mot_de_passe, role = 'STUDENT' } = req.body;
+            const { nom, prenom, email, mot_de_passe, role = 'STUDENT', domaine } = req.body;
 
             if (!nom || !prenom || !email || !mot_de_passe) {
                 return res.status(400).json({ success: false, message: 'All fields are required' });
+            }
+
+            // Validate @supnum.mr email domain
+            if (!email.toLowerCase().endsWith('@supnum.mr')) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Seuls les emails @supnum.mr sont autorisés'
+                });
+            }
+
+            // Validate domaine (DSI, RSS, DWM) - required
+            const validDomaines = ['DSI', 'RSS', 'DWM'];
+            if (!domaine || !validDomaines.includes(domaine.toUpperCase())) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Le domaine est obligatoire (DSI, RSS ou DWM)'
+                });
             }
 
             const existingUser = await User.findByEmail(email);
@@ -20,11 +37,15 @@ const authController = {
 
             const hashedPassword = await bcrypt.hash(mot_de_passe, 10);
 
+            const isAlumni = role === 'ALUMNI' || role === 'Alumni';
+
             const userId = await User.create({
-                nom, prenom, email, mot_de_passe: hashedPassword, role
+                nom, prenom, email, mot_de_passe: hashedPassword, role,
+                domaine: domaine.toUpperCase(),
+                est_verifie: isAlumni ? false : true
             });
 
-            if (role === 'ALUMNI' || role === 'Alumni') {
+            if (isAlumni) {
                 try {
                     await Alumni.create({
                         id_user: userId,
@@ -33,6 +54,13 @@ const authController = {
                 } catch (alumniError) {
                     console.error('Error creating alumni record:', alumniError);
                 }
+
+                // Alumni must wait for admin validation - no token
+                return res.status(201).json({
+                    success: true,
+                    pendingValidation: true,
+                    message: 'Inscription réussie. Votre compte est en attente de validation par l\'administrateur.'
+                });
             }
 
             const token = jwt.sign(
@@ -45,7 +73,7 @@ const authController = {
                 success: true,
                 message: 'User registered successfully',
                 token,
-                user: { id_user: userId, nom, prenom, email, role }
+                user: { id_user: userId, nom, prenom, email, role, domaine: domaine.toUpperCase() }
             });
 
         } catch (error) {
@@ -65,6 +93,14 @@ const authController = {
                 });
             }
 
+            // Validate @supnum.mr email domain
+            if (!email.toLowerCase().endsWith('@supnum.mr')) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Seuls les emails @supnum.mr sont autorisés'
+                });
+            }
+
             const user = await User.findByEmail(email);
             if (!user) {
                 return res.status(401).json({
@@ -78,6 +114,15 @@ const authController = {
                 return res.status(401).json({
                     success: false,
                     message: 'Invalid credentials'
+                });
+            }
+
+            // Block alumni who are not yet validated by admin
+            if (user.role === 'ALUMNI' && !user.est_verifie) {
+                return res.status(403).json({
+                    success: false,
+                    pendingValidation: true,
+                    message: 'Votre compte est en attente de validation par l\'administrateur.'
                 });
             }
 

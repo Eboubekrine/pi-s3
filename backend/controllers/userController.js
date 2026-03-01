@@ -54,6 +54,20 @@ const userController = {
             console.error('❌ Error in delete user:', error);
             res.status(500).json({ success: false, message: error.message });
         }
+    },
+
+    validateUser: async (req, res) => {
+        try {
+            console.log(`📥 PUT /users/${req.params.id}/validate called`);
+            const updated = await User.update(req.params.id, { est_verifie: true });
+            if (!updated) {
+                return res.status(404).json({ success: false, message: 'User not found' });
+            }
+            res.json({ success: true, message: 'Utilisateur validé avec succès' });
+        } catch (error) {
+            console.error('❌ Error validating user:', error);
+            res.status(500).json({ success: false, message: error.message });
+        }
     }
 };
 

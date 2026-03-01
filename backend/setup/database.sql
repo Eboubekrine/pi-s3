@@ -24,6 +24,7 @@ CREATE TABLE utilisateur (
     email VARCHAR(150) UNIQUE NOT NULL,
     mot_de_passe VARCHAR(255) NOT NULL,
     role ENUM('STUDENT', 'ALUMNI', 'ADMIN') NOT NULL DEFAULT 'STUDENT',
+    domaine ENUM('DSI', 'RSS', 'DWM') DEFAULT NULL,
     date_inscription TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     avatar VARCHAR(500),
     bio TEXT,
