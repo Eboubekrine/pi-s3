@@ -7,7 +7,7 @@ const authController = {
     register: async (req, res) => {
         try {
             console.log('Register request:', req.body);
-            const { nom, prenom, email, mot_de_passe, role = 'STUDENT', domaine } = req.body;
+            const { nom, prenom, email, mot_de_passe, role = 'STUDENT', domaine, annee_diplome } = req.body;
 
             if (!nom || !prenom || !email || !mot_de_passe) {
                 return res.status(400).json({ success: false, message: 'All fields are required' });
@@ -49,7 +49,11 @@ const authController = {
                 try {
                     await Alumni.create({
                         id_user: userId,
-                        annee_diplome: null, specialite: null, entreprise_actuelle: null, poste: null, linkedin: null
+                        annee_diplome: annee_diplome || null,
+                        specialite: domaine || null,
+                        entreprise_actuelle: null,
+                        poste: null,
+                        linkedin: null
                     });
                 } catch (alumniError) {
                     console.error('Error creating alumni record:', alumniError);

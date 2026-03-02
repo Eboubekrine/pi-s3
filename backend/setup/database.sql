@@ -82,6 +82,7 @@ CREATE TABLE offre (
     type_offre ENUM('STAGE', 'EMPLOI', 'ALTERNANCE', 'FREELANCE'),
     lieu VARCHAR(150),
     date_publication TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    date_expiration DATE DEFAULT NULL,
     est_active BOOLEAN DEFAULT TRUE,
     id_user INT,
     FOREIGN KEY (id_user) REFERENCES utilisateur(id_user) ON DELETE SET NULL

@@ -7,7 +7,7 @@ const offreController = {
             if (req.user.role !== 'ALUMNI' && req.user.role !== 'ADMIN') {
                 return res.status(403).json({ success: false, message: 'Only Alumni and Admins can create offers' });
             }
-            const { titre, description, entreprise, type_offre, lieu } = req.body;
+            const { titre, description, entreprise, type_offre, lieu, date_expiration } = req.body;
             const id_user = req.user.userId;
 
             if (!titre || !entreprise || !type_offre) {
@@ -15,7 +15,7 @@ const offreController = {
             }
 
             const id = await Offre.create({
-                titre, description, entreprise, type_offre, id_user, lieu
+                titre, description, entreprise, type_offre, id_user, lieu, date_expiration
             });
 
             res.status(201).json({ success: true, message: 'Offre created', id });

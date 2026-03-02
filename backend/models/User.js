@@ -30,7 +30,7 @@ const User = {
 
     findAll: async () => {
         const [rows] = await db.execute(`
-            SELECT u.*, a.disponible_mentorat 
+            SELECT u.*, a.disponible_mentorat, a.annee_diplome, a.promotion 
             FROM utilisateur u 
             LEFT JOIN alumni a ON u.id_user = a.id_user 
             ORDER BY u.date_inscription DESC

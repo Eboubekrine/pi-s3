@@ -2,10 +2,10 @@ const db = require('../config/database');
 
 const Offre = {
     create: async (offreData) => {
-        const { titre, description, entreprise, type_offre, id_user, lieu } = offreData;
+        const { titre, description, entreprise, type_offre, id_user, lieu, date_expiration } = offreData;
         const [result] = await db.execute(
-            'INSERT INTO offre (titre, description, entreprise, type_offre, id_user, lieu) VALUES (?, ?, ?, ?, ?, ?)',
-            [titre, description, entreprise, type_offre, id_user, lieu || null]
+            'INSERT INTO offre (titre, description, entreprise, type_offre, id_user, lieu, date_expiration) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [titre, description, entreprise, type_offre, id_user, lieu || null, date_expiration || null]
         );
         return result.insertId;
     },
