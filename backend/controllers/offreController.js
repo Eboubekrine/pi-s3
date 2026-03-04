@@ -29,6 +29,11 @@ const offreController = {
             const { page, limit, type, entreprise, userId } = req.query;
             const filters = { type_offre: type, entreprise, id_user: userId };
 
+            // Students only see active offers
+            if (req.user.role === 'STUDENT') {
+                filters.est_active = 1;
+            }
+
             console.log('GET /offres - filters:', filters);
             const offres = await Offre.findAll(filters, page, limit);
             console.log('GET /offres - count:', offres.length);

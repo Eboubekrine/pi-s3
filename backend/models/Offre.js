@@ -18,6 +18,11 @@ const Offre = {
             LEFT JOIN utilisateur u ON o.id_user = u.id_user 
             WHERE 1=1
         `;
+        if (filters.est_active !== undefined) {
+            query += ' AND o.est_active = ?';
+            params.push(filters.est_active);
+        }
+
         const params = [];
 
         if (filters.type_offre) {

@@ -3,18 +3,13 @@ const db = require('../config/database');
 const dashboardController = {
     getStats: async (req, res) => {
         try {
-            // Check if user is admin
-            if (req.user.role !== 'ADMIN') {
-                return res.status(403).json({ message: 'Access denied' });
-            }
-
-            // Parallel fetching
+            // General stats accessible to all authenticated users
             const [users] = await db.execute('SELECT role, COUNT(*) as count FROM utilisateur GROUP BY role');
-            const [offers] = await db.execute('SELECT COUNT(*) as count FROM offre');
+            const [offers] = await db.execute('SELECT COUNT(*) as count FROM offre WHERE est_active = 1');
             const [events] = await db.execute('SELECT COUNT(*) as count FROM evenement WHERE date_evenement >= CURDATE()');
             const [partners] = await db.execute('SELECT COUNT(*) as count FROM partenaire');
 
-            // Format data
+            // For Graduates count, we look for ALUMNI role
             let stats = {
                 students: 0,
                 alumni: 0,

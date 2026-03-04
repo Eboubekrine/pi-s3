@@ -54,8 +54,17 @@ const candidatureController = {
 
     getOffreApplications: async (req, res) => {
         try {
-            // Only admin or the creator of the offer should see this (logic could be refined)
-            const candidatures = await Candidature.findByOffre(req.params.offreId);
+            const { offreId } = req.params;
+
+            // Ownership/Admin check
+            const [offre] = await db.execute('SELECT id_user FROM offre WHERE id_offre = ?', [offreId]);
+            if (offre.length === 0) return res.status(404).json({ message: 'Offre non trouvée' });
+
+            if (req.user.role !== 'ADMIN' && offre[0].id_user !== req.user.userId) {
+                return res.status(403).json({ success: false, message: 'Accès refusé' });
+            }
+
+            const candidatures = await Candidature.findByOffre(offreId);
             res.json({ success: true, data: candidatures });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
@@ -64,30 +73,36 @@ const candidatureController = {
 
     updateStatus: async (req, res) => {
         try {
+            const { id } = req.params;
             const { statut } = req.body;
-            const updated = await Candidature.updateStatut(req.params.id, statut);
+
+            // Ownership/Admin check
+            const [rows] = await db.execute(`
+                SELECT c.id_user as applicant_id, o.id_user as owner_id, o.titre, o.entreprise 
+                FROM candidature c 
+                JOIN offre o ON c.id_offre = o.id_offre 
+                WHERE c.id_candidature = ?
+            `, [id]);
+
+            if (rows.length === 0) return res.status(404).json({ success: false, message: 'Candidature non trouvée' });
+
+            if (req.user.role !== 'ADMIN' && rows[0].owner_id !== req.user.userId) {
+                return res.status(403).json({ success: false, message: 'Accès refusé' });
+            }
+
+            const updated = await Candidature.updateStatut(id, statut);
             if (updated) {
-                // Get application details to find the user
-                const [rows] = await db.execute(`
-                    SELECT c.id_user, o.titre, o.entreprise 
-                    FROM candidature c 
-                    JOIN offre o ON c.id_offre = o.id_offre 
-                    WHERE c.id_candidature = ?
-                `, [req.params.id]);
+                const app = rows[0];
+                await Notification.create({
+                    id_user: app.applicant_id,
+                    type: 'APPLICATION',
+                    contenu: `Votre candidature pour "${app.titre}" chez ${app.entreprise} a été mise à jour : ${statut}.`,
+                    lien: '/dashboard/applications'
+                });
 
-                if (rows.length > 0) {
-                    const app = rows[0];
-                    await Notification.create({
-                        id_user: app.id_user,
-                        type: 'APPLICATION',
-                        contenu: `Votre candidature pour "${app.titre}" chez ${app.entreprise} a été mise à jour : ${statut}.`,
-                        lien: '/dashboard/applications'
-                    });
-                }
-
-                res.json({ success: true, message: 'Status updated' });
+                res.json({ success: true, message: 'Statut mis à jour' });
             } else {
-                res.status(404).json({ success: false, message: 'Application not found' });
+                res.status(404).json({ success: false, message: 'Candidature non trouvée' });
             }
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });

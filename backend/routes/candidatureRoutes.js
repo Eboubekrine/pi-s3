@@ -7,7 +7,7 @@ const { authMiddleware, adminMiddleware } = require('../middleware/auth');
 // CV is passed as a URL string, not a file upload.
 router.post('/apply', authMiddleware, candidatureController.apply);
 router.get('/my', authMiddleware, candidatureController.getUserApplications);
-router.get('/offre/:offreId', authMiddleware, adminMiddleware, candidatureController.getOffreApplications);
-router.patch('/:id/status', authMiddleware, adminMiddleware, candidatureController.updateStatus);
+router.get('/offre/:offreId', authMiddleware, candidatureController.getOffreApplications);
+router.patch('/:id/status', authMiddleware, candidatureController.updateStatus);
 
 module.exports = router;
