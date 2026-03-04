@@ -12,7 +12,8 @@ const Offre = {
 
     findAll: async (filters = {}, page = 1, limit = 20) => {
         let query = `
-            SELECT o.*, u.nom as user_nom, u.prenom as user_prenom 
+            SELECT o.*, u.nom as user_nom, u.prenom as user_prenom,
+            (SELECT COUNT(*) FROM candidature WHERE id_offre = o.id_offre) as candidate_count
             FROM offre o 
             LEFT JOIN utilisateur u ON o.id_user = u.id_user 
             WHERE 1=1
@@ -45,10 +46,11 @@ const Offre = {
 
     findById: async (id) => {
         const [rows] = await db.execute(
-            `SELECT o.*, u.nom as user_nom, u.prenom as user_prenom 
+            `SELECT o.*, u.nom as user_nom, u.prenom as user_prenom,
+             (SELECT COUNT(*) FROM candidature WHERE id_offre = o.id_offre) as candidate_count
              FROM offre o 
              LEFT JOIN utilisateur u ON o.id_user = u.id_user 
-             WHERE id_offre = ?`,
+             WHERE o.id_offre = ?`,
             [id]
         );
         return rows[0];
